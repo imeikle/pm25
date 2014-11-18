@@ -1,16 +1,20 @@
+# Read in data provided
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+
+# Transform the year variable to a factor
 NEI <- transform(NEI, year = factor(year))
-# Unsatisfactory boxplot with truncated y-axis due to massive outlierlibrary(data.table)
 
-boxplot(Emissions ~ year, NEI, ylim = c(0,0.5))
-
+# Turn it into a data.table
 library(data.table)
-# Turn it into a datatable
 NEI.tbl <- data.table(NEI)
+
 # Sum over the emissions for each year
 NEI.sum <- NEI.tbl[,sum(Emissions), by=year]
 names(NEI.sum) <- c("year", "Total")
-plot(Total ~ year, NEI.sum)
 
-barplot(NEI.sum$Total, names.arg = NEI.sum$year, col = heat.colors(4))
+# Create a color palette
 pal <- colorRampPalette(c("red", "blue"))
+
+# Display downward trend through a barplot
 barplot(NEI.sum$Total, names.arg = NEI.sum$year, col = pal(4))
