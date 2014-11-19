@@ -34,3 +34,5 @@ ggplot(data = Coal.Ems, aes(SCC, Total, color = factor(year))) + geom_histogram(
 # using fill
 ggplot(data = Coal.Ems, aes(SCC, Total, fill = factor(year))) + geom_histogram(stat = "identity")
 
+# using line
+ggplot(data = Coal.Ems, aes(SCC, Total, color=year)) + geom_line(aes(group=year))
