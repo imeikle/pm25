@@ -14,9 +14,9 @@ Coal.Ems <- data.frame(NEI.SCC$SCC, NEI.SCC$Emissions, as.factor(NEI.SCC$year))
 names(Coal.Ems) <- c("SCC","Emissions","year")
 
 # Put the data in "long" format
-Coal.Ems %>%
+Coal.Ems <- Coal.Ems %>%
         group_by(SCC,year) %>%
         summarise(Total = sum(Emissions))
 
 # Working plot
-ggplot(data = Coal.Ems, aes(SCC, Emissions)) + geom_point(color = "blue") + facet_grid(. ~ year)
+ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_point(color = "blue") + facet_grid(. ~ year)
