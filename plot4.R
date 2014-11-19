@@ -20,3 +20,17 @@ Coal.Ems <- Coal.Ems %>%
 
 # Working plot
 ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_point(color = "blue") + facet_grid(. ~ year)
+# Working histogram
+ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_histogram(stat = "identity") + facet_grid(. ~ year)
+
+# Working histogram with color - year as facet grid
+ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_histogram(stat = "identity", aes(color = factor(year))) + facet_grid(. ~ year)
+
+# Working histogram with color - year as color stack
+ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_histogram(stat = "identity", aes(color = factor(year)))
+# with terms re-arranged
+ggplot(data = Coal.Ems, aes(SCC, Total, color = factor(year))) + geom_histogram(stat = "identity")
+
+# using fill
+ggplot(data = Coal.Ems, aes(SCC, Total, fill = factor(year))) + geom_histogram(stat = "identity")
+
