@@ -36,3 +36,6 @@ ggplot(data = Coal.Ems, aes(SCC, Total, fill = factor(year))) + geom_histogram(s
 
 # using line
 ggplot(data = Coal.Ems, aes(SCC, Total, color=year)) + geom_line(aes(group=year))
+
+# Using line and facet grid
+ggplot(data = Coal.Ems, aes(SCC, Total, color=year)) + geom_line(aes(group=year))  + facet_grid(. ~ year)
