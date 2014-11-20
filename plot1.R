@@ -2,19 +2,25 @@
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
-# Transform the year variable to a factor
-NEI <- transform(NEI, year = factor(year))
+# Load the dplyr package
+library(dplyr)
 
-# Turn it into a data.table
-library(data.table)
-NEI.tbl <- data.table(NEI)
-
-# Sum over the emissions for each year
-NEI.sum <- NEI.tbl[,sum(Emissions), by=year]
-names(NEI.sum) <- c("year", "Total")
+# Create a table of total emissions per year
+NEI.sum <- NEI %>%
+select(Emissions, year) %>%
+group_by(year) %>%
+summarise(Total = sum(Emissions))
 
 # Create a color palette
 pal <- colorRampPalette(c("red", "blue"))
 
-# Display downward trend through a barplot
+# Change number format so that y-axis is easier to read
+opt <- getOption("scipen")
+options("scipen" = 20)
+
+# Print table as a barplot to show dereasing trend
 barplot(NEI.sum$Total, names.arg = NEI.sum$year, col = pal(4))
+title(main = "Total emissions across USA", xlab = "Year", ylab = "Total emissions")
+
+# Revert number format
+options("scipen" = opt)
