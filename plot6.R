@@ -5,8 +5,8 @@ library(ggplot2)
 
 SCC.Motor <- SCC[(grepl("Highway Vehicles - Gasoline", SCC$SCC.Level.Two)),]
 
-NEI.Baltimore <- subset(NEI, fips == 24510)
-NEI.LA <- subset(NEI, fips == 06037)
+NEI.Baltimore <- subset(NEI, fips == "24510")
+NEI.LA <- subset(NEI, fips == "06037")
 
 Motor.Baltimore <- merge(NEI.Baltimore,SCC.Motor, by = "SCC")
 Motor.Baltimore.cut <- data.frame(Motor.Baltimore$SCC, Motor.Baltimore$Emissions, as.factor(Motor.Baltimore$year))
@@ -25,11 +25,14 @@ Motor.LA.Ems <- Motor.LA.cut %>%
         summarise(Total = sum(Emissions))
 
 # Subsitute zero for missing values of SCC in each year
-all.SCC <- expand.grid(SCC = Motor.Baltimore.Ems$SCC, year = c("1999", "2002", "2005", "2008"))
+all.SCC <- expand.grid(SCC = SCC.Motor$SCC, year = c("1999", "2002", "2005", "2008"))
 
 MB.all <- merge(all.SCC, Motor.Baltimore.Ems, all.x=TRUE)
 MB.all[is.na(MB.all)] <- 0
 
 LA.all <- merge(all.SCC, Motor.LA.Ems, all.x=TRUE)
-LA.all[is.na(LA.all)] <- 0
+LA.all[is.na(LA.all)] <- 0 
+
+# Problematic difference in scale - need to plot separately, one above the other - Include fips and use as a factor?
+ggplot() + geom_point(data = MB.all, aes(SCC, Total), color = "blue") + geom_point(data = LA.all, aes(SCC, Total), color = "red")
 
