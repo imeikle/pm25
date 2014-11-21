@@ -24,6 +24,8 @@ Motor.LA.Ems <- Motor.LA.cut %>%
         group_by(SCC, year) %>%
         summarise(Total = sum(Emissions))
 
+
+
 # Subsitute zero for missing values of SCC in each year
 all.SCC <- expand.grid(SCC = SCC.Motor$SCC, year = c("1999", "2002", "2005", "2008"))
 
@@ -33,6 +35,18 @@ MB.all[is.na(MB.all)] <- 0
 LA.all <- merge(all.SCC, Motor.LA.Ems, all.x=TRUE)
 LA.all[is.na(LA.all)] <- 0 
 
-# Problematic difference in scale - need to plot separately, one above the other - Include fips and use as a factor?
-ggplot() + geom_point(data = MB.all, aes(SCC, Total), color = "blue") + geom_point(data = LA.all, aes(SCC, Total), color = "red")
+# Add panel variable for plotting
+MB.all$panel <- "a"
+LA.all$panel <- "b"
+
+# Bind both DFs together to create plot panels
+Motor.all <- rbind(MB.all, LA.all)
+
+Motor <- ggplot(data = Motor.all, mapping = aes(SCC, Total))
+Motor <- Motor + facet_grid(panel~., scale="free")
+Motor <- Motor + layer(data = MB.all, geom = c( "line"), stat = "identity")
+Motor <- Motor + layer(data = LA.all, geom = c( "line"), stat = "identity")
+Motor
+
+#ggplot() + geom_point(data = MB.all, aes(SCC, Total), color = "blue") + geom_point(data = LA.all, aes(SCC, Total), color = "red")
 
