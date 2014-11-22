@@ -36,16 +36,18 @@ LA.all <- merge(all.SCC, Motor.LA.Ems, all.x=TRUE)
 LA.all[is.na(LA.all)] <- 0 
 
 # Add panel variable for plotting
-MB.all$panel <- "a"
-LA.all$panel <- "b"
+MB.all$panel <- "Baltimore"
+LA.all$panel <- "Los Angeles"
 
 # Bind both DFs together to create plot panels
 Motor.all <- rbind(MB.all, LA.all)
 
-Motor <- ggplot(data = Motor.all, mapping = aes(SCC, Total))
-Motor <- Motor + facet_grid(panel~., scale="free")
-Motor <- Motor + layer(data = MB.all, geom = c( "line"), stat = "identity")
-Motor <- Motor + layer(data = LA.all, geom = c( "line"), stat = "identity")
+Motor <- ggplot(data = Motor.all, mapping = aes(SCC, Total, group=1))
+Motor <- Motor + facet_grid(panel~year, scale="free")
+Motor <- Motor + layer(data = MB.all, geom = c( "line"), stat = "identity", color = "blue")
+Motor <- Motor + layer(data = LA.all, geom = c( "line"), stat = "identity", color = "red")
+Motor <- Motor + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
+#Motor <- Motor + theme(axis.text.x = element_blank())
 Motor
 
 #ggplot() + geom_point(data = MB.all, aes(SCC, Total), color = "blue") + geom_point(data = LA.all, aes(SCC, Total), color = "red")

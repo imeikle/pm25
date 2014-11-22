@@ -10,8 +10,6 @@ Motor.Baltimore <- merge(NEI.Baltimore,SCC.Motor, by = "SCC")
 Motor.Baltimore.cut <- data.frame(Motor.Baltimore$SCC, Motor.Baltimore$Emissions, as.factor(Motor.Baltimore$year))
 names(Motor.Baltimore.cut) <- c("SCC","Emissions","year")
 
-library(dplyr)
-
 Motor.Baltimore.Ems <- Motor.Baltimore.cut %>%
         group_by(SCC, year) %>%
         summarise(Total = sum(Emissions))
@@ -21,6 +19,11 @@ all.SCC <- expand.grid(SCC = Motor.Baltimore.Ems$SCC, year = c("1999", "2002", "
 MB.all <- merge(all.SCC, Motor.Baltimore.Ems, all.x=TRUE)
 MB.all[is.na(MB.all)] <- 0
 
+Motor <- ggplot(data = MB.all, aes(SCC, Total, color = year))
+Motor <- Motor + facet_grid(. ~ year)
+Motor <- Motor + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
+Motor <- Motor + geom_line(aes(group=year))
+Motor
 
 ggplot(data = MB.all, aes(SCC, Total, color = year)) + geom_line(aes(group=year)) + facet_grid(. ~ year)
 
