@@ -44,14 +44,19 @@ Coal.all[is.na(Coal.all)] <- 0
 opt <- getOption("scipen")
 options("scipen" = 20)
 
+# Create plots, faceted by year
 Coal <- ggplot(data = Coal.all, aes(SCC, Total, color=year))
 Coal <- Coal + facet_grid(. ~ year)
+Coal <- Coal + labs(title = "Emissions from Coal Combustion-related Sources")
+Coal <- Coal + labs( x = "Source of Emissions", y = "Total Emissions (Tons)")
+# SCC identifiers and x-axis tick marks removed for clarity
 Coal <- Coal + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
 Coal <- Coal + geom_line(aes(group=year))
-Coal
+
+# Print to a PNG file
+png(filename = "plot4.PNG")
+print(Coal)
+dev.off()
 
 # Revert number format
 options("scipen" = opt)
-
-# Need to remove axis text
-#ggplot(data = Coal.all, aes(SCC, Total, color=year)) + geom_line(aes(group=year))  + facet_grid(. ~ year)

@@ -17,5 +17,7 @@ NEI.Baltimore.sum <- NEI.Baltimore %>%
 pal <- colorRampPalette(c("red", "blue"))
 
 # Display barplot showing a fluctuating, generally downward trend
+png(filename = "plot2.PNG")
 barplot(NEI.Baltimore.sum$Total, names.arg = NEI.Baltimore.sum$year, col = pal(4))
 title(main = "Total emissions - Baltimore", xlab = "Year", ylab = "Total emissions (Tons)")
+dev.off()

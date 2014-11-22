@@ -17,8 +17,10 @@ opt <- getOption("scipen")
 options("scipen" = 20)
 
 # Print table as a barplot to show dereasing trend
+png(filename = "plot1.PNG")
 barplot(NEI.sum$Total, names.arg = NEI.sum$year, col = pal(4))
 title(main = "Total emissions across USA", xlab = "Year", ylab = "Total emissions (Tons)")
+dev.off()
 
 # Revert number format
 options("scipen" = opt)
