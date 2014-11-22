@@ -6,14 +6,21 @@ library(dplyr)
 library(ggplot2)
 
 # Find all classfications in SCC which correspond to Coal Combustion
+#
+# Assumption: Full data set obtained by union of 
+#   EI.Sector variable mention of Coal
+#   SCC.Level.One variable mention of Combustion
+
 SCC.coalComb <- SCC[(grepl("Coal", SCC$EI.Sector) 
     & grepl("Combustion", SCC$SCC.Level.One)),]
 
-# Merge with the emissions data and select only variables to be plotted
+# Merge with the emissions data by SCC identifier
 NEI.SCC <- merge(NEI, SCC.coalComb, by = "SCC")
+
+# Reduce dataframe by selecting only variables to be plotted
 Coal.Ems <- data.frame(NEI.SCC$SCC, NEI.SCC$Emissions, as.factor(NEI.SCC$year))
 
-# Rename the variables
+# Rename the variables for easier reference
 names(Coal.Ems) <- c("SCC","Emissions","year")
 
 # Summarise the emissions data using dplyr operations
@@ -21,24 +28,30 @@ Coal.Ems <- Coal.Ems %>%
         group_by(SCC,year) %>%
         summarise(Total = sum(Emissions))
 
-# Working plot
-# ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_point(color = "blue") + facet_grid(. ~ year)
-# Working histogram
-# ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_histogram(stat = "identity") + facet_grid(. ~ year)
+# Some years are missing emission observations for SCC values, presumably due to
+# changes in what is being monitored. A line graph mis-represents these missing 
+# values by averaging between neighbours. To prevent this, missing values are 
+# set to zero.
 
-# Working histogram with color - year as facet grid
-# ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_histogram(stat = "identity", aes(color = factor(year))) + facet_grid(. ~ year)
+# Create table including all combinations of SCC and year
+all.SCC <- expand.grid(SCC = Coal.Ems$SCC, year = c("1999", "2002", "2005", "2008"))
 
-# Working histogram with color - year as color stack
-# ggplot(data = Coal.Ems, aes(SCC, Total)) + geom_histogram(stat = "identity", aes(color = factor(year)))
-# with terms re-arranged
-# ggplot(data = Coal.Ems, aes(SCC, Total, color = factor(year))) + geom_histogram(stat = "identity")
+# Merge table with data, creating new entries where required and zeroing them
+Coal.all <- merge(all.SCC, Coal.Ems, all.x=TRUE)
+Coal.all[is.na(Coal.all)] <- 0
 
-# using fill
-# ggplot(data = Coal.Ems, aes(SCC, Total, fill = factor(year))) + geom_histogram(stat = "identity")
+# Change number format so that y-axis is easier to read
+opt <- getOption("scipen")
+options("scipen" = 20)
 
-# using line
-# ggplot(data = Coal.Ems, aes(SCC, Total, color=year)) + geom_line(aes(group=year))
+Coal <- ggplot(data = Coal.all, aes(SCC, Total, color=year))
+Coal <- Coal + facet_grid(. ~ year)
+Coal <- Coal + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
+Coal <- Coal + geom_line(aes(group=year))
+Coal
 
-# Using line and facet grid - Needs data zeroing as in plot 5
-ggplot(data = Coal.Ems, aes(SCC, Total, color=year)) + geom_line(aes(group=year))  + facet_grid(. ~ year)
+# Revert number format
+options("scipen" = opt)
+
+# Need to remove axis text
+#ggplot(data = Coal.all, aes(SCC, Total, color=year)) + geom_line(aes(group=year))  + facet_grid(. ~ year)

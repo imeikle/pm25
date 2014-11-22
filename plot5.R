@@ -14,8 +14,15 @@ Motor.Baltimore.Ems <- Motor.Baltimore.cut %>%
         group_by(SCC, year) %>%
         summarise(Total = sum(Emissions))
         
-# Subsitute zero for missing values of SCC in each year
+# Some years are missing emission observations for SCC values, presumably due to
+# changes in what is being monitored. A line graph mis-represents these missing 
+# values by averaging between neighbours. To prevent this, missing values are 
+# set to zero.
+
+# Create table including all combinations of SCC and year
 all.SCC <- expand.grid(SCC = Motor.Baltimore.Ems$SCC, year = c("1999", "2002", "2005", "2008"))
+
+# Merge table with data, creating new entries where required and zeroing them
 MB.all <- merge(all.SCC, Motor.Baltimore.Ems, all.x=TRUE)
 MB.all[is.na(MB.all)] <- 0
 
