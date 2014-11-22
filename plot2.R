@@ -1,23 +1,21 @@
-# # Read in data provided
+# Read in data provided
 NEI <- readRDS("summarySCC_PM25.rds")
-SCC <- readRDS("Source_Classification_Code.rds")
 
-# Transform the year variable to a factor
-NEI <- transform(NEI, year = factor(year))
+# Load the dplyr package
+library(dplyr)
 
 # Select the observations for Baltimore City based on fips value
 NEI.Baltimore <- subset(NEI, fips == 24510)
 
-# Turn it into a data.table
-library(data.table)
-NEI.Baltimore.tbl <- data.table(NEI.Baltimore)
-
-# Sum over the emissions for each year
-NEI.Baltimore.sum <- NEI.Baltimore.tbl[, sum(Emissions), by=year]
-setnames(NEI.Baltimore.sum, "V1", "Total")
+# Create a table of total emissions in Baltimore per year using dplyr operations
+NEI.Baltimore.sum <- NEI.Baltimore %>%
+  select(Emissions, year) %>%
+  group_by(year) %>%
+  summarise(Total = sum(Emissions))
 
 # Create a color palette
 pal <- colorRampPalette(c("red", "blue"))
 
-# Display barplot showing afluctuating, downward trend
+# Display barplot showing a fluctuating, generally downward trend
 barplot(NEI.Baltimore.sum$Total, names.arg = NEI.Baltimore.sum$year, col = pal(4))
+title(main = "Total emissions - Baltimore", xlab = "Year", ylab = "Total emissions (Tons)")
