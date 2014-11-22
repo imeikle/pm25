@@ -42,11 +42,11 @@ MB.all <- merge(all.SCC, Motor.Baltimore.Ems, all.x=TRUE)
 MB.all[is.na(MB.all)] <- 0
 
 # Create plots, faceted by year
-# SCC identifiers and x-axis tick marks removed for clarity
 Motor <- ggplot(data = MB.all, aes(SCC, Total, color = year))
 Motor <- Motor + facet_grid(. ~ year)
-Motor <- Motor + labs(title = "Emissions from Motor Vehicle Sources")
+Motor <- Motor + labs(title = "Emissions from Motor Vehicle Sources (Baltimore)")
 Motor <- Motor + labs( x = "Source of Emissions", y = "Total Emissions (Tons)")
+# SCC identifiers and x-axis tick marks removed for clarity
 Motor <- Motor + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
 Motor <- Motor + geom_line(aes(group=year))
 Motor

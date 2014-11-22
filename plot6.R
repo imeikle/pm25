@@ -65,6 +65,13 @@ LA.all$panel <- "Los Angeles"
 # Bind both DFs together to create full plot data source
 Motor.all <- rbind(MB.all, LA.all)
 
+# California used a different emission estimation model in 2008
+# An annotation is used to indicate this on the plot
+# Data frame created to add this layer
+ann_text <- data.frame(panel = factor("Los Angeles", c("Baltimore","Los Angeles")),
+                       year = factor(2008, c("1999", "2002", "2005", "2008")),
+                       Total=700)
+
 # Create plots, faceted by panel variable and by year
 Motor <- ggplot(data = Motor.all, mapping = aes(SCC, Total, group=1))
 # Locations have emission levels, so y-axis scales freely for each panel
@@ -73,7 +80,11 @@ Motor <- Motor + labs(title = "Emissions from Motor Vehicle Sources")
 Motor <- Motor + labs( x = "Source of Emissions", y = "Total Emissions (Tons)")
 Motor <- Motor + layer(data = MB.all, geom = c( "line"), color = "blue")
 Motor <- Motor + layer(data = LA.all, geom = c( "line"),  color = "red")
+# SCC identifiers and x-axis tick marks removed for clarity
 Motor <- Motor + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
+# Annotation data frame and text added
+Motor <- Motor + geom_text(data = ann_text,x = 375,
+                           label = "EMFAC Model used\n in CA, 2008", size = 3)
 
 # Print to a PNG file
 png(filename = "plot6.PNG")
